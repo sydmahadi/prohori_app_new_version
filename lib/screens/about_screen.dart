@@ -59,7 +59,7 @@ class AboutScreen extends StatelessWidget {
           _section(
             context,
             icon: Icons.checklist_rounded,
-            title: english ? 'Today's Amal' : 'আজকের আমল',
+            title: english ? "Today's Amal" : 'আজকের আমল',
             description: english
                 ? 'Review your obligatory worship, Sunnah practices, good deeds and actions to avoid.'
                 : 'ফরজ ইবাদত, সুন্নাহ, ভালো কাজ এবং বর্জনীয় কাজের তালিকা দেখে প্রতিদিনের আমল পর্যালোচনা করুন।',
