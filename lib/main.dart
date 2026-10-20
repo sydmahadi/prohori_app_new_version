@@ -27,7 +27,6 @@ class PathcholaApp extends StatefulWidget {
 
 class _PathcholaAppState extends State<PathcholaApp> {
   final StorageService _storage = StorageService();
-
   final GlobalKey<NavigatorState> _navigatorKey =
       GlobalKey<NavigatorState>();
 
@@ -40,9 +39,136 @@ class _PathcholaAppState extends State<PathcholaApp> {
   bool _handlingBack = false;
 
   String? _loadError;
+  String _userName = '';
   int _selectedIndex = 0;
 
   static const String _themeKey = 'pathchola_theme_dark_v2';
+  static const String _nameKey = 'pathchola_user_name';
+  static const String _exitReminderIndexKey =
+      'pathchola_exit_reminder_index';
+
+  static const List<Map<String, String>> _exitReminders = [
+    {
+      'bn': 'আজকের ফরজ সালাতগুলো আদায় করেছেন তো?',
+      'en': 'Have you performed today’s obligatory prayers?',
+    },
+    {
+      'bn': 'ফজরের দুই রাকাত সুন্নত আদায় করেছেন তো?',
+      'en': 'Have you performed the two Sunnah rakats before Fajr?',
+    },
+    {
+      'bn': 'আজ কুরআন তিলাওয়াত করেছেন তো?',
+      'en': 'Have you recited the Quran today?',
+    },
+    {
+      'bn': 'আজ সকালের যিকির ও দোয়া পড়েছেন তো?',
+      'en': 'Have you done your morning adhkar and duas?',
+    },
+    {
+      'bn': 'আজ সন্ধ্যার যিকির ও দোয়া পড়েছেন তো?',
+      'en': 'Have you done your evening adhkar and duas?',
+    },
+    {
+      'bn': 'আজ আল্লাহর কাছে ক্ষমা চেয়েছ ও ইস্তিগফার করেছেন তো?',
+      'en': 'Have you asked Allah for forgiveness and made istighfar?',
+    },
+    {
+      'bn': 'আজ নবী ﷺ-এর ওপর দরুদ পাঠ করেছেন তো?',
+      'en': 'Have you sent blessings upon Prophet Muhammad ﷺ today?',
+    },
+    {
+      'bn': 'আজ বিতরের সালাত আদায় করেছেন তো?',
+      'en': 'Have you performed Witr prayer today?',
+    },
+    {
+      'bn': 'আজ কোনো উপকারী ইসলামি জ্ঞান অর্জন করেছেন তো?',
+      'en': 'Have you learned something beneficial about Islam today?',
+    },
+    {
+      'bn': 'আজ মা-বাবার সঙ্গে সদাচরণ ও দায়িত্ব পালনের চেষ্টা করেছেন তো?',
+      'en': 'Have you tried to be kind to your parents and fulfil your duties?',
+    },
+    {
+      'bn': 'আজ মানুষের হক ও আমানত রক্ষা করেছেন তো?',
+      'en': 'Have you respected people’s rights and protected trusts?',
+    },
+    {
+      'bn': 'আজ আত্মীয়তার সম্পর্ক বজায় রাখার চেষ্টা করেছেন তো?',
+      'en': 'Have you tried to maintain family ties today?',
+    },
+    {
+      'bn': 'আজ কোনো ভালো কাজ বা সদকা করেছেন তো?',
+      'en': 'Have you done a good deed or given charity today?',
+    },
+    {
+      'bn': 'আজ মিথ্যা বলা থেকে বেঁচে ছিলেন তো?',
+      'en': 'Have you avoided lying today?',
+    },
+    {
+      'bn': 'আজ গীবত ও অপবাদ থেকে বিরত ছিলেন তো?',
+      'en': 'Have you avoided backbiting and slander today?',
+    },
+    {
+      'bn': 'আজ প্রতারণা ও ধোঁকা থেকে বেঁচে ছিলেন তো?',
+      'en': 'Have you avoided cheating and deception today?',
+    },
+    {
+      'bn': 'আজ রাগের সময় নিজেকে সংযত রাখার চেষ্টা করেছেন তো?',
+      'en': 'Have you tried to control your anger today?',
+    },
+    {
+      'bn': 'আজ অহংকার থেকে দূরে থাকার চেষ্টা করেছেন তো?',
+      'en': 'Have you tried to stay away from arrogance today?',
+    },
+    {
+      'bn': 'আজ লোক দেখানো আমল থেকে বেঁচে থাকার চেষ্টা করেছেন তো?',
+      'en': 'Have you tried to avoid showing off in worship today?',
+    },
+    {
+      'bn': 'আজ হালাল উপার্জন ও সঠিক লেনদেনের বিষয়ে সতর্ক ছিলেন তো?',
+      'en': 'Have you been mindful of lawful earnings and honest dealings?',
+    },
+    {
+      'bn': 'আজ নিজের দৃষ্টি ও আচরণ সংযত রেখেছেন তো?',
+      'en': 'Have you guarded your gaze and conduct today?',
+    },
+    {
+      'bn': 'আজ অপচয় ও অন্যের অধিকার নষ্ট করা থেকে বিরত ছিলেন তো?',
+      'en': 'Have you avoided waste and violating others’ rights?',
+    },
+    {
+      'bn': 'আজ কারও সঙ্গে খারাপ কথা বললে ক্ষমা চাওয়ার কথা ভেবেছেন তো?',
+      'en': 'If you spoke harshly to someone, have you considered apologising?',
+    },
+    {
+      'bn': 'আজ কাউকে কষ্ট দিলে তা সংশোধনের চেষ্টা করেছেন তো?',
+      'en': 'If you hurt someone, have you tried to make things right?',
+    },
+    {
+      'bn': 'আজ নিয়ত শুদ্ধ রাখার চেষ্টা করেছেন তো?',
+      'en': 'Have you tried to keep your intentions sincere today?',
+    },
+    {
+      'bn': 'আজ তাহাজ্জুদ বা অন্য কোনো নফল ইবাদতের সুযোগ হয়েছে তো?',
+      'en': 'Have you had an opportunity for Tahajjud or another voluntary act?',
+    },
+    {
+      'bn': 'আজ দুহা/চাশতের সালাত আদায় করেছেন তো, যদি সুযোগ হয়ে থাকে?',
+      'en': 'Have you performed Duha prayer if you had the opportunity?',
+    },
+    {
+      'bn': 'আজ নিজের ভুলগুলো নিয়ে আত্মসমালোচনা করেছেন তো?',
+      'en': 'Have you reflected on your mistakes today?',
+    },
+    {
+      'bn': 'আজকের আমলগুলোর তালিকা মিলিয়ে দেখেছেন তো?',
+      'en': 'Have you reviewed your daily Amal checklist?',
+    },
+    {
+      'bn': 'আগামীকাল আরও ভালো হওয়ার জন্য একটি ছোট লক্ষ্য ঠিক করেছেন তো?',
+      'en': 'Have you set one small goal to improve tomorrow?',
+    },
+  ];
 
   @override
   void initState() {
@@ -63,6 +189,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
       ]);
 
       final prefs = await SharedPreferences.getInstance();
+      final savedName = prefs.getString(_nameKey)?.trim() ?? '';
 
       if (!mounted) return;
 
@@ -72,11 +199,15 @@ class _PathcholaAppState extends State<PathcholaApp> {
         );
         _english = results[1] as bool;
         _dark = prefs.getBool(_themeKey) ?? false;
+        _userName = savedName;
         _loading = false;
       });
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scheduleDailyPopup();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _ensureUserName();
+        if (mounted) {
+          await _scheduleDailyPopup();
+        }
       });
     } catch (e, stackTrace) {
       debugPrint('PATHCHOLA LOAD ERROR: $e');
@@ -91,14 +222,80 @@ class _PathcholaAppState extends State<PathcholaApp> {
     }
   }
 
-  Future<void> _scheduleDailyPopup() async {
-    if (!mounted || _dailyDialogShown || _loadError != null) {
-      return;
-    }
+  Future<void> _ensureUserName() async {
+    if (!mounted || _userName.trim().isNotEmpty) return;
 
-    await Future<void>.delayed(
-      const Duration(milliseconds: 500),
-    );
+    final controller = TextEditingController();
+
+    try {
+      final context = _navigatorKey.currentContext;
+      if (context == null) return;
+
+      final name = await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(
+            _english ? 'Welcome to Prohori' : 'প্রহরীতে স্বাগতম',
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _english
+                    ? 'What should we call you?'
+                    : 'আপনাকে কি নামে ডাকব?',
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                  labelText: _english ? 'Your name' : 'আপনার নাম',
+                  border: const OutlineInputBorder(),
+                ),
+                onSubmitted: (value) {
+                  if (value.trim().isNotEmpty) {
+                    Navigator.of(dialogContext).pop(value.trim());
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            FilledButton(
+              onPressed: () {
+                if (controller.text.trim().isNotEmpty) {
+                  Navigator.of(dialogContext).pop(
+                    controller.text.trim(),
+                  );
+                }
+              },
+              child: Text(_english ? 'Continue' : 'শুরু করি'),
+            ),
+          ],
+        ),
+      );
+
+      final cleanName = name?.trim() ?? '';
+      if (cleanName.isEmpty) return;
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_nameKey, cleanName);
+
+      if (mounted) {
+        setState(() => _userName = cleanName);
+      }
+    } finally {
+      controller.dispose();
+    }
+  }
+
+  Future<void> _scheduleDailyPopup() async {
+    if (!mounted || _dailyDialogShown || _loadError != null) return;
+
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
     if (!mounted || _dailyDialogShown) return;
 
@@ -131,12 +328,8 @@ class _PathcholaAppState extends State<PathcholaApp> {
           ),
           title: Text(
             isQuran
-                ? (_english
-                    ? 'Verse of the day'
-                    : 'আজকের কুরআনের আয়াত')
-                : (_english
-                    ? 'Hadith of the day'
-                    : 'আজকের হাদিস'),
+                ? (_english ? 'Verse of the day' : 'আজকের কুরআনের আয়াত')
+                : (_english ? 'Hadith of the day' : 'আজকের হাদিস'),
             textAlign: TextAlign.center,
           ),
           content: SingleChildScrollView(
@@ -159,10 +352,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
                 Text(
                   _english ? item.english : item.bangla,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    height: 1.7,
-                  ),
+                  style: const TextStyle(fontSize: 17, height: 1.7),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -179,9 +369,8 @@ class _PathcholaAppState extends State<PathcholaApp> {
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             FilledButton(
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop();
-              },
+              onPressed: () =>
+                  Navigator.of(context, rootNavigator: true).pop(),
               child: Text(_english ? 'Continue' : 'শুরু করি'),
             ),
           ],
@@ -194,9 +383,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
     final previous = _data;
     final updated = Map<String, dynamic>.from(newData);
 
-    setState(() {
-      _data = updated;
-    });
+    setState(() => _data = updated);
 
     try {
       await _storage.saveData(updated);
@@ -206,9 +393,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
 
       if (!mounted) return;
 
-      setState(() {
-        _data = previous;
-      });
+      setState(() => _data = previous);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -227,9 +412,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
   Future<void> _toggleLanguage() async {
     final next = !_english;
 
-    setState(() {
-      _english = next;
-    });
+    setState(() => _english = next);
 
     try {
       await _storage.saveEnglish(next);
@@ -241,9 +424,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
   Future<void> _toggleTheme() async {
     final next = !_dark;
 
-    setState(() {
-      _dark = next;
-    });
+    setState(() => _dark = next);
 
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -255,11 +436,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
 
   void _openTodayAmal() {
     final navigator = _navigatorKey.currentState;
-
-    if (navigator == null) {
-      debugPrint('PATHCHOLA: Navigator is not ready.');
-      return;
-    }
+    if (navigator == null) return;
 
     navigator.push(
       MaterialPageRoute<void>(
@@ -272,57 +449,77 @@ class _PathcholaAppState extends State<PathcholaApp> {
     );
   }
 
+  Future<bool> _confirmExitWithAmalReminder() async {
+    if (!mounted) return false;
+
+    final prefs = await SharedPreferences.getInstance();
+    final savedIndex = prefs.getInt(_exitReminderIndexKey) ?? 0;
+    final index = savedIndex % _exitReminders.length;
+    final reminder = _exitReminders[index];
+
+    final context = _navigatorKey.currentContext;
+    if (context == null) return false;
+
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      useRootNavigator: true,
+      builder: (dialogContext) => AlertDialog(
+        icon: const Icon(
+          Icons.volunteer_activism_rounded,
+          size: 34,
+          color: Color(0xFFB69A55),
+        ),
+        title: Text(
+          _english
+              ? 'One last reminder, $_userName'
+              : 'একটু মনে করিয়ে দিই, $_userName',
+        ),
+        content: Text(
+          '${_english ? reminder['en']! : reminder['bn']!}\n\n'
+          '${_english ? 'Would you like to review your deeds before leaving?' : 'বের হওয়ার আগে আমলগুলো একবার দেখে নেবে?'}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(_english ? 'Stay' : 'আরও থাকি'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(_english ? 'Exit' : 'বন্ধ করি'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldExit == true) {
+      await prefs.setInt(
+        _exitReminderIndexKey,
+        (index + 1) % _exitReminders.length,
+      );
+      return true;
+    }
+
+    return false;
+  }
+
   Future<void> _handleBack() async {
     if (_handlingBack || !mounted) return;
 
     _handlingBack = true;
 
     try {
-      // অন্য tab-এ থাকলে Home-এ ফিরবে।
       if (_selectedIndex != 0) {
-        setState(() {
-          _selectedIndex = 0;
-        });
+        setState(() => _selectedIndex = 0);
         return;
       }
 
-      final dialogContext = _navigatorKey.currentContext;
-      if (dialogContext == null || !mounted) return;
+      final shouldExit = await _confirmExitWithAmalReminder();
 
-      final shouldExit = await showDialog<bool>(
-        context: dialogContext,
-        useRootNavigator: true,
-        builder: (dialogContext) {
-          return AlertDialog(
-            title: Text(
-              _english ? 'Exit Prohori?' : 'অ্যাপ বন্ধ করবেন?',
-            ),
-            content: Text(
-              _english
-                  ? 'Do you want to close the app?'
-                  : 'আপনি কি প্রহরী অ্যাপ থেকে বের হতে চান?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop(false);
-                },
-                child: Text(_english ? 'Cancel' : 'না'),
-              ),
-              FilledButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop(true);
-                },
-                child: Text(_english ? 'Exit' : 'হ্যাঁ, বন্ধ করুন'),
-              ),
-            ],
-          );
-        },
-      );
-
-      if (shouldExit == true && mounted) {
+      if (shouldExit && mounted) {
         await SystemNavigator.pop();
       }
+    } catch (e) {
+      debugPrint('PATHCHOLA EXIT ERROR: $e');
     } finally {
       _handlingBack = false;
     }
@@ -351,7 +548,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
     return MaterialApp(
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
-      title: 'পথচলা',
+      title: 'প্রহরী',
       themeMode: _dark ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         useMaterial3: true,
@@ -420,8 +617,8 @@ class _PathcholaAppState extends State<PathcholaApp> {
               const SizedBox(height: 18),
               Text(
                 _english
-                    ? 'Loading Pathchola...'
-                    : 'পথচলা চালু হচ্ছে...',
+                    ? 'Loading Prohori...'
+                    : 'প্রহরী চালু হচ্ছে...',
               ),
             ],
           ),
@@ -562,9 +759,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
         bottomNavigationBar: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
+            setState(() => _selectedIndex = index);
           },
           destinations: [
             NavigationDestination(
