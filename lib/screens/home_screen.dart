@@ -221,7 +221,7 @@ class HomeScreen extends StatelessWidget {
                             Text(
                               english
                                   ? 'Your Amal journey'
-                                  : 'তোমার আমলের যাত্রা',
+                                  : 'আপনার আমলের যাত্রা',
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium
