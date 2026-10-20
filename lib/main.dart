@@ -675,6 +675,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
       HomeScreen(
         data: _data,
         english: _english,
+        userName: _userName,
         onGoals: () => setState(() => _selectedIndex = 1),
         onWorship: () => setState(() => _selectedIndex = 2),
         onTodayAmal: _openTodayAmal,
