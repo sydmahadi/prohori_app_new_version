@@ -223,7 +223,7 @@ class _TodayAmalScreenState extends State<TodayAmalScreen> {
                   Text(
                     widget.english
                         ? 'For avoidance items, tick when you have avoided the action today.'
-                        : 'বর্জনীয় কাজের পাশে টিক দেবে যদি আজ সেই কাজ থেকে বিরত থাকতে পারো।',
+                        : 'বর্জনীয় কাজের পাশে টিক দিবেন যদি আজ সেই কাজ থেকে বিরত থাকতে পারেন।',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   if (_saving) ...[
