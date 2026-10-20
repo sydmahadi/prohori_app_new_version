@@ -10,6 +10,7 @@ import 'screens/rights_screen.dart';
 import 'screens/reflection_screen.dart';
 import 'screens/report_screen.dart';
 import 'screens/today_amal_screen.dart';
+import 'screens/about_screen.dart';
 import 'services/storage_service.dart';
 import 'services/daily_content_service.dart';
 
@@ -27,6 +28,7 @@ class PathcholaApp extends StatefulWidget {
 
 class _PathcholaAppState extends State<PathcholaApp> {
   final StorageService _storage = StorageService();
+
   final GlobalKey<NavigatorState> _navigatorKey =
       GlobalKey<NavigatorState>();
 
@@ -69,7 +71,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
       'en': 'Have you done your evening adhkar and duas?',
     },
     {
-      'bn': 'আজ আল্লাহর কাছে ক্ষমা চেয়েছ ও ইস্তিগফার করেছেন তো?',
+      'bn': 'আজ আল্লাহর কাছে ক্ষমা চেয়ে ইস্তিগফার করেছেন তো?',
       'en': 'Have you asked Allah for forgiveness and made istighfar?',
     },
     {
@@ -205,6 +207,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _ensureUserName();
+
         if (mounted) {
           await _scheduleDailyPopup();
         }
@@ -244,7 +247,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
               Text(
                 _english
                     ? 'What should we call you?'
-                    : 'আপনাকে কি নামে ডাকব?',
+                    : 'আপনাকে কী নামে ডাকব?',
               ),
               const SizedBox(height: 12),
               TextField(
@@ -352,7 +355,10 @@ class _PathcholaAppState extends State<PathcholaApp> {
                 Text(
                   _english ? item.english : item.bangla,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 17, height: 1.7),
+                  style: const TextStyle(
+                    fontSize: 17,
+                    height: 1.7,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -445,6 +451,14 @@ class _PathcholaAppState extends State<PathcholaApp> {
           english: _english,
           onDataChanged: _changeData,
         ),
+      ),
+    );
+  }
+
+  void _openAbout() {
+    _navigatorKey.currentState?.push(
+      MaterialPageRoute<void>(
+        builder: (_) => AboutScreen(english: _english),
       ),
     );
   }
@@ -628,7 +642,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
 
     if (_loadError != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('পথচলা')),
+        appBar: AppBar(title: const Text('প্রহরী')),
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -740,6 +754,11 @@ class _PathcholaAppState extends State<PathcholaApp> {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           actions: [
+            IconButton(
+              tooltip: _english ? 'About Prohori' : 'অ্যাপ সম্পর্কে',
+              onPressed: _openAbout,
+              icon: const Icon(Icons.info_outline_rounded),
+            ),
             IconButton(
               tooltip: _english ? 'Change language' : 'ভাষা পরিবর্তন',
               onPressed: _toggleLanguage,
