@@ -22,9 +22,11 @@ class _TodayAmalScreenState extends State<TodayAmalScreen> {
   late Map<String, dynamic> _workingData;
   late Map<String, dynamic> _checks;
 
-  String get _todayKey {
-    final now = DateTime.now();
-    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  String get _todayKey => _dateKey(DateTime.now());
+
+  String _dateKey(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-'
+        '${date.day.toString().padLeft(2, '0')}';
   }
 
   static const List<Map<String, String>> _items = [
@@ -89,6 +91,43 @@ class _TodayAmalScreenState extends State<TodayAmalScreen> {
     return items.where((item) => _checks[item['id']] == true).length;
   }
 
+  // আজকের দিন বাদ দিয়ে আগের ৭ দিনের সংরক্ষিত রেকর্ড পরীক্ষা করে।
+  // কোনো দিনের রেকর্ড না থাকলে সেটিকে অসম্পূর্ণ হিসেবে নিশ্চিত ধরা হয় না।
+  List<Map<String, String>> _itemsMissedForSevenDays() {
+    final logs = _asMap(_workingData['todayAmalLogs']);
+    final result = <Map<String, String>>[];
+    final now = DateTime.now();
+
+    for (final item in _items) {
+      final id = item['id']!;
+      var missedAllSevenDays = true;
+
+      for (var daysAgo = 1; daysAgo <= 7; daysAgo++) {
+        final date = DateTime(now.year, now.month, now.day - daysAgo);
+        final key = _dateKey(date);
+
+        if (!logs.containsKey(key)) {
+          missedAllSevenDays = false;
+          break;
+        }
+
+        final dayLog = _asMap(logs[key]);
+        final dayChecks = _asMap(dayLog['checks']);
+
+        if (dayChecks[id] == true) {
+          missedAllSevenDays = false;
+          break;
+        }
+      }
+
+      if (missedAllSevenDays) {
+        result.add(item);
+      }
+    }
+
+    return result;
+  }
+
   Future<void> _toggle(String id, bool value) async {
     if (_saving) return;
 
@@ -116,7 +155,7 @@ class _TodayAmalScreenState extends State<TodayAmalScreen> {
 
     try {
       await widget.onDataChanged(newData);
-    } catch (e) {
+    } catch (_) {
       if (mounted) {
         setState(() {
           _checks = previousChecks;
@@ -147,6 +186,7 @@ class _TodayAmalScreenState extends State<TodayAmalScreen> {
     final total = _items.length;
     final completed = _doneCount(_items);
     final ratio = total == 0 ? 0.0 : completed / total;
+    final missedItems = _itemsMissedForSevenDays();
 
     return Scaffold(
       appBar: AppBar(
@@ -194,6 +234,91 @@ class _TodayAmalScreenState extends State<TodayAmalScreen> {
               ),
             ),
           ),
+
+          if (missedItems.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Card(
+              color: Theme.of(context).colorScheme.errorContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.notifications_active_outlined,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onErrorContainer,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            widget.english
+                                ? '7-day reminder'
+                                : '৭ দিনের আমল স্মরণবার্তা',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onErrorContainer,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.english
+                          ? 'These items were not marked complete in the saved records for the previous 7 consecutive days. Review them gently and work towards improvement.'
+                          : 'আগের টানা ৭ দিনের সংরক্ষিত রেকর্ডে নিচের আমলগুলো সম্পন্ন হিসেবে চিহ্নিত হয়নি। আত্মসমালোচনা করো এবং ধীরে ধীরে উন্নতির চেষ্টা করো।',
+                      style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onErrorContainer,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ...missedItems.map(
+                      (item) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.circle,
+                              size: 8,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onErrorContainer,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                widget.english
+                                    ? item['en']!
+                                    : item['bn']!,
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onErrorContainer,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+
           const SizedBox(height: 14),
           _section(
             title: widget.english
