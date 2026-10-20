@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   final Map<String, dynamic> data;
   final bool english;
+  final String userName;
   final VoidCallback onGoals;
   final VoidCallback onWorship;
   final VoidCallback onTodayAmal;
@@ -14,6 +15,7 @@ class HomeScreen extends StatelessWidget {
     super.key,
     required this.data,
     required this.english,
+    required this.userName,
     required this.onGoals,
     required this.onWorship,
     required this.onTodayAmal,
@@ -115,6 +117,7 @@ class HomeScreen extends StatelessWidget {
     final completedGoals = _countCompleted(goals);
     final completedRights = _countCompleted(rights);
     final progress = _stageProgress / _stage;
+    final name = userName.trim();
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -123,14 +126,22 @@ class HomeScreen extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                english ? 'Assalamu Alaikum' : 'আসসালামু আলাইকুম',
+                english
+                    ? (name.isEmpty
+                        ? 'Assalamu Alaikum'
+                        : 'Assalamu Alaikum, $name')
+                    : (name.isEmpty
+                        ? 'আসসালামু আলাইকুম'
+                        : 'আসসালামু আলাইকুম, $name'),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
             ),
-            const Icon(Icons.waving_hand_rounded,
-                color: Color(0xFFC9A45C)),
+            const Icon(
+              Icons.waving_hand_rounded,
+              color: Color(0xFFC9A45C),
+            ),
           ],
         ),
         const SizedBox(height: 6),
@@ -185,7 +196,6 @@ class HomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 20),
 
-        // প্রহরী: আগের স্টেজ ও অগ্রগতি অপরিবর্তিত
         Card(
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
@@ -198,8 +208,11 @@ class HomeScreen extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.stars_rounded,
-                          color: Color(0xFFC9A45C), size: 30),
+                      const Icon(
+                        Icons.stars_rounded,
+                        color: Color(0xFFC9A45C),
+                        size: 30,
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(
@@ -210,14 +223,16 @@ class HomeScreen extends StatelessWidget {
                                   ? 'Your Amal journey'
                                   : 'তোমার আমলের যাত্রা',
                               style: Theme.of(context)
-                                  .textTheme.titleMedium
+                                  .textTheme
+                                  .titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 5),
                             Text(
                               _stageName,
                               style: Theme.of(context)
-                                  .textTheme.titleLarge
+                                  .textTheme
+                                  .titleLarge
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color:
@@ -262,7 +277,8 @@ class HomeScreen extends StatelessWidget {
                       value: progress,
                       minHeight: 10,
                       backgroundColor: Theme.of(context)
-                          .colorScheme.surfaceContainerHighest,
+                          .colorScheme
+                          .surfaceContainerHighest,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -292,7 +308,6 @@ class HomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        // নতুন আজকের আমল চেকলিস্ট
         Card(
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
@@ -304,14 +319,17 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.today_rounded,
-                          color: Color(0xFFC9A45C)),
+                      const Icon(
+                        Icons.today_rounded,
+                        color: Color(0xFFC9A45C),
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           english ? 'Today’s Amal' : 'আজকের আমল',
                           style: Theme.of(context)
-                              .textTheme.titleMedium
+                              .textTheme
+                              .titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -333,7 +351,8 @@ class HomeScreen extends StatelessWidget {
                           .toDouble(),
                       minHeight: 9,
                       backgroundColor: Theme.of(context)
-                          .colorScheme.surfaceContainerHighest,
+                          .colorScheme
+                          .surfaceContainerHighest,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -349,12 +368,15 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
+
         Card(
           child: ListTile(
             leading: const CircleAvatar(
               backgroundColor: Color(0x1FC9A45C),
-              child: Icon(Icons.menu_book_rounded,
-                  color: Color(0xFFC9A45C)),
+              child: Icon(
+                Icons.menu_book_rounded,
+                color: Color(0xFFC9A45C),
+              ),
             ),
             title: Text(
               english ? 'Daily reflection' : 'দৈনিক আত্মসমালোচনা',
@@ -370,14 +392,18 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
+
         Card(
           child: Padding(
             padding: const EdgeInsets.all(18),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.lightbulb_outline_rounded,
-                    color: Color(0xFFC9A45C), size: 28),
+                const Icon(
+                  Icons.lightbulb_outline_rounded,
+                  color: Color(0xFFC9A45C),
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -386,7 +412,8 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         english ? 'A little reminder' : 'একটি ছোট স্মরণিকা',
                         style: Theme.of(context)
-                            .textTheme.titleMedium
+                            .textTheme
+                            .titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 6),
@@ -431,7 +458,8 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     value,
                     style: Theme.of(context)
-                        .textTheme.headlineSmall
+                        .textTheme
+                        .headlineSmall
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 3),
