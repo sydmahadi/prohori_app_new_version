@@ -490,7 +490,7 @@ class _PathcholaAppState extends State<PathcholaApp> {
         ),
         content: Text(
           '${_english ? reminder['en']! : reminder['bn']!}\n\n'
-          '${_english ? 'Would you like to review your deeds before leaving?' : 'বের হওয়ার আগে আমলগুলো একবার দেখে নেবে?'}',
+          '${_english ? 'Would you like to review your deeds before leaving?' : 'বের হওয়ার আগে আমলগুলো একবার দেখে নেবেন?'}',
         ),
         actions: [
           TextButton(
