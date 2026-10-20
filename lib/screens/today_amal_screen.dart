@@ -344,8 +344,8 @@ class _TodayAmalScreenState extends State<TodayAmalScreen> {
           const SizedBox(height: 12),
           Text(
             widget.english
-                ? 'This checklist is for personal reflection, not a religious ruling. Some duties depend on your circumstances.'
-                : 'এটি ব্যক্তিগত আত্মসমালোচনার তালিকা; ফতোয়া নয়। কিছু দায়িত্ব ব্যক্তির পরিস্থিতির ওপর নির্ভরশীল।',
+                ? 'This page covers only a limited selection of deeds. To learn about other deeds, study the Quran and Hadith and consult qualified Islamic scholars and jurists.'
+: 'এই পৃষ্ঠায় সীমিত কিছু আমল সম্পর্কে বলা হয়েছে। অন্যান্য আমল সম্পর্কে জানতে কুরআন-হাদিস অধ্যয়ন করুন এবং ফকিহ ও যোগ্য আলেমদের শরণাপন্ন হোন।',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 20),
